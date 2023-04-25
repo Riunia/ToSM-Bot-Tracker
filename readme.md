@@ -9,7 +9,7 @@ This is a fork of SloneFallion's original [World Boss Tracker Bot](https://githu
 * Replaced sorted-by-time view with a status update system.
 * Boss timers are shown in `time left to respawn` rather than `time of last reported defeat`
 * To mitigate misclick and fat-finger errors, marking kills now requires a two step process of selecting a channel and then pushing a confirmation button.
-* Added a `Missing` button to alert others when a boss in a particular channel was sniped without corresponding a kill report. Helps prevent TPs from going to waste.
+* Added a `Missing` button to alert others when a boss in a particular channel was sniped without a corresponding kill report. Helps prevent TPs from going to waste.
 #### New commands
 * Added a `/setup` command to be used in place of `/say` for setting up boss status timers in their respective threads.
 * Added a `/clear` command to remove old tracker setups during updates.
