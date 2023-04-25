@@ -40,7 +40,7 @@ If you're not familiar with Node.JS or working with developer applications and B
   * Confounding Abyss (8)
   * Innars (20)
   
-2. Edit `exports/bossMessageIDTemplates.js`, `commands/setup.js` and `commands/interaction.js` if you need to change the number of channels or add new bosses. Follow the instructions containted within the comments of each .js file. Then, restart the bot.
+2. Edit `exports/bossMessageIDTemplates.js`, `commands/setup.js` and `commands/interaction.js` if you need to change the number of channels or add new bosses. Follow the instructions contained within the comments of each .js file. Then, restart the bot.
 
 ## Discord Setup
 1. Create a new forum in your Discord server and give it the following permissions:  
@@ -68,7 +68,8 @@ If you're not familiar with Node.JS or working with developer applications and B
 
 4. For each boss:
 
-    Use the /interaction command after the placeholder messages have been created.  
+    Use the `/interaction` command after the placeholder messages have been created.
+    
     `/interaction create:Boss Timer bossmenu:<boss>`
 
 
