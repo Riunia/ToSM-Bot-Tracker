@@ -15,7 +15,7 @@ client.on(Events.InteractionCreate, async interaction => {
             await interaction.deferUpdate();                // Acknowledge menu interaction.
             selected = interaction.values[0]                // get selected boss & channel request
             reportMap.set(interaction.user.id, selected)    // add request to global list of requests, with user id as the key
-            LogReportInfo();                              // Remove comment marker from this command if you prefer to recieve logs.
+            //LogReportInfo();                              // Remove comment marker from this command if you prefer to recieve logs.
 
             // set a new 3s timer on the selection menu. If 3s pass without a followup button press, interaction expires and the request is deleted.
             ResetRequestTimer();
@@ -56,7 +56,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
             await interaction.deferUpdate();            // Acknowledge the menu interaction.
             const target = reportMap.get(buttonUser)    // Fetch button user's request from the reportMap.
-            console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
+            //console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
 
             var { channel, bossTimerID, channelNumber, timestamp, timeoutmsg } = GenerateReport(interaction, target);
             await SendKillReport();
@@ -92,7 +92,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
             await interaction.deferUpdate();            // Acknowledge the menu interaction.
             const target = reportMap.get(buttonUser)    // Fetch button user's request from the reportMap.
-            console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
+            //console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
 
             var { channel, bossTimerID, channelNumber, timestamp, timeoutmsg } = GenerateReport(interaction, target);
             await SendMissingReport();
