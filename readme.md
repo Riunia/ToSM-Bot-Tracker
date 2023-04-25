@@ -25,7 +25,7 @@ If you're not familiar with Node.JS or working with developer applications and B
 * [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html)
 
 ## Initial Bot Setup
-1. Clone or [download](https://github.com/SloneFallion/tof-boss-tracker/archive/refs/heads/main.zip) the repository.
+1. Clone or [download](https://github.com/Jokoril/tof-boss-tracker-AN/archive/refs/heads/main.zip) the repository.
 2. Edit `.env` to supply the necessary values.
 3. In a terminal, change to the directory.
 4. Run `npm install discord.js dotenv`.
