@@ -1,59 +1,129 @@
-const { EmbedBuilder, Events, GuildMemberManager, GuildMemberRoleManager } = require('discord.js');
+const { EmbedBuilder, Events, GuildMemberManager, GuildMemberRoleManager, ComponentType, SlashCommandBuilder } = require('discord.js');
 
+//Respawn time (in seconds). Default is 3600 (1 hour). 
+let seconds = 3600 //For debugging during setup, seconds = 60 is suggested. Don't forget to change it back afterwards!
+
+// Create objects to store temporary timers and identifiers.
+var timeouts = [];
+var selected = {};
+var reportMap = new Map ([]);
+
+// \/\/\/\/\/\/\/\/\/\/\ Channel Selection \/\/\/\/\/\/\/\/\/\/\
 client.on(Events.InteractionCreate, async interaction => {
-    try {
-        if (!interaction.isStringSelectMenu()) return;
-        // Acknowledge the menu interaction.
-        await interaction.deferUpdate();
-        // Reset the menu.
-        await interaction.editReply({ content: '' });
-        // Generate a timestamp based on when the user interacted with the menu.
-        const timestamp = Date.now();
-        // Obtain message ID's for the boss timers. These should be set in advance.
-        const bossTimers = require('../exports/bossMessageID.js')
-        // Read the value of the menu interaction.
-        const selected = interaction.values[0];
-        // Cache and set the channel that the interaction came from.
-        const channel = client.channels.cache.get(interaction.channelId);
-        // Set the boss chanel number based on the interaction choice value minus the words.
-        let channelNumber = selected.match(/\d+/g);
-        // Match the selected value from the menu interaction to a key in '../exports/bossMessageID.js'.
-        let bossTimerID = bossTimers.bossTimers.find(r => r.key === selected) || { key: "error", value: `Something went wrong or this item is not yet finished. The BOT author has been notified.` }
-        // Fetch the message by the ID matched from the previous operation.
-        await channel.messages.fetch(bossTimerID.messageID).then(message => {
-            // Edit the message with the channel selected, relative and absolute timestamp (timezone-agnostic), and the user that selected the interaction.
-            message.edit(`Channel ${channelNumber}: <t:${Math.floor(timestamp / 1000)}:t>, <t:${Math.floor(timestamp / 1000)}:R> (<@!${interaction.user.id}>).`);
-        })
-        // Add a one second delay to be sure Discord has marked the message as edited before we fetch the message list.
-        setTimeout(async function () {
-            // Fetch the message list from the channel the interaction came from.
-            const messages = await channel.messages.fetch();
-            // Find and store the second-to-last message in the channel.
-            const messageSortedByTime = messages.first(2)[1]
-            // Sort and store all of the messages received by last edited.
-            const sortedMessages = messages.sort((a, b) => {
-                return b.editedTimestamp - a.editedTimestamp
-            }).map(message => {
-                return {
-                    content: message.content,
-                    messageid: message.id
-                }
-            })
-            // Print the content of each message to a single variable. Skip the second-to-last message stored earlier. Also skip any empty messages. This includes pictures and menu select embeds.
-            const reducedMessages = sortedMessages.filter(msg => msg.content !== '' && msg.messageid !== messageSortedByTime.id
-            ).reduce((acc, msg) => {
-                return { content: acc.content + "\n" + msg.content }
-            })
-            // Post the sorted list in an edit to the second-to-last message in the channel.
-            messageSortedByTime.edit(`**Sorted by Last Killed:** \n${reducedMessages.content}`);
-        }, 1000 * 1)
-        // If there is a broken menu, DM the BOT maintainer.
-        if (bossTimerID.key === 'error') {
-            // Send a DM to the bot maintainer.
-            client.users.send(`${process.env.botmaintainer}`, `User **<@${interaction.user.id}>** *(${interaction.user.username}#${interaction.user.discriminator})* requested incomplete or broken menu item ${selected}.`);
-            console.log(`User **<@${interaction.user.id}>** *(${interaction.user.username}#${interaction.user.discriminator})* requested incomplete or broken menu item ${selected}.`);
-        }
+    if (!interaction.isStringSelectMenu()) return;        
+        try {
+            await interaction.deferUpdate();                // Acknowledge menu interaction.
+            selected = interaction.values[0]                // get selected boss & channel request
+            reportMap.set(interaction.user.id, selected)    // add request to global list of requests, with user id as the key
+            LogReportInfo();                              // Remove comment marker from this command if you prefer to recieve logs.
+
+            // set a new 3s timer on the selection menu. If 3s pass without a followup button press, interaction expires and the request is deleted.
+            ResetRequestTimer();
     } catch (error) {
-        return console.log(error);
+        console.log(error);
+        return
     }
-});
+
+    function LogReportInfo() {
+        console.log(interaction.user.id + ` is issuing a report for ` + selected);
+        console.log('PENDING REQUESTS');
+        for (let requests of reportMap)
+            console.log(requests);
+    }
+
+    function ResetRequestTimer() {
+        const thread = interaction.customId;
+        timeouts.indexOf(thread) === -1 ? timeouts.push(thread) : {};
+
+        clearTimeout(timeouts[thread]);
+        timeouts[thread] = setTimeout(function () {
+            interaction.editReply({ content: '' });
+            reportMap.delete(interaction.user.id);
+        }, 3000);
+    }
+})
+
+// \/\/\/\/\/\/\/\/\/\/\ 'Killed' button \/\/\/\/\/\/\/\/\/\/\
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isButton()) return;
+    if (interaction.customId === 'markDefeated')
+        try {
+            //Check that the user pressing the button has a pending request via the channel selection menu.
+            const buttonUser = interaction.user.id;
+            if (reportMap.has(buttonUser) === false) {   // Reject in case of missing or expired request.
+                interaction.reply({content: 'You have not selected a Channel or took too long to push a button!', ephemeral:true});
+            return;}
+
+            await interaction.deferUpdate();            // Acknowledge the menu interaction.
+            const target = reportMap.get(buttonUser)    // Fetch button user's request from the reportMap.
+            console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
+
+            var { channel, bossTimerID, channelNumber, timestamp, timeoutmsg } = GenerateReport(interaction, target);
+            await SendKillReport();
+        } catch(error) {
+            return console.log(error);
+    }
+
+    async function SendKillReport() {
+            // Fetch the message by ID and update status.
+            await channel.messages.fetch(bossTimerID.messageID).then(async (message) => {
+            // Report Channel, status, relative and absolute respawn time(timezone-agnostic), and reporting user.
+            (await message.edit(`**Channel ${channelNumber}:** :coffin:     Respawns at <t:${Math.floor(timestamp / 1000) + seconds}:t>  /  <t:${Math.floor(timestamp / 1000) + seconds}:R>  (<@!${interaction.user.id}>)`));
+            // Clear any old ongoing timers for the selected message.
+            clearTimeout(timeouts[timeoutmsg]);
+            // Start a new timer to update status to "respawned" after (seconds + 5s buffer time).
+            timeouts[timeoutmsg] = setTimeout(async function () {
+                (await message.edit(`**Channel ${channelNumber}:** :white_check_mark:     Respawned`));
+            }, 1000 * seconds + 5);
+        });
+    }
+})
+
+// \/\/\/\/\/\/\/\/\/\/\ 'Mark Missing' Button \/\/\/\/\/\/\/\/\/\/\
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isButton()) return;
+    if (interaction.customId === 'markMissing')
+        try {
+            //Check that the user pressing the button has a pending request via the channel selection menu.
+            const buttonUser = interaction.user.id;
+            if (reportMap.has(buttonUser) === false) {  // Reject in case of missing or expired request.
+                interaction.reply({content: 'You have not selected a Channel or took too long to push a button!', ephemeral:true});
+            return;}
+
+            await interaction.deferUpdate();            // Acknowledge the menu interaction.
+            const target = reportMap.get(buttonUser)    // Fetch button user's request from the reportMap.
+            console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
+
+            var { channel, bossTimerID, channelNumber, timestamp, timeoutmsg } = GenerateReport(interaction, target);
+            await SendMissingReport();
+        } catch(error) {
+            return console.log(error);
+    }
+
+    async function SendMissingReport() {
+            // Fetch the message by ID and update status.
+            await channel.messages.fetch(bossTimerID.messageID).then(async (message) => {
+            // Report Channel, status, relative and absolute reporting time(timezone-agnostic), and reporting user.
+            (await message.edit(`**Channel ${channelNumber}:** :warning:     Reported missing <t:${Math.floor(timestamp / 1000)}:R>  (<@!${interaction.user.id}>)`));
+            // Clear any old ongoing timers for the selected message.
+            clearTimeout(timeouts[timeoutmsg]);
+        });
+    }
+})
+
+function GenerateReport(interaction, target) {
+    const rawdata = require('../exports/BossMessageID.json');
+    let bossTimers = { "bossTimers": rawdata };
+
+    // Generate elements to update the boss status message...
+    // Timestamp
+    const timestamp = Date.now();
+    // Channel number
+    const channel = client.channels.cache.get(interaction.channelId);
+    const channelNumber = target.match(/\d+/g);
+    // Message ID
+    let bossTimerID = bossTimers.bossTimers.find(r => r.key === target) || { key: "error", value: `Something went wrong or this item is not yet finished. The BOT author has been notified.` };
+    let timeoutmsg = (bossTimerID.messageID);
+    return { channel, bossTimerID, channelNumber, timestamp, timeoutmsg };
+}
+

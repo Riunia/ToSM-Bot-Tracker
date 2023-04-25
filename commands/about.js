@@ -14,7 +14,7 @@ module.exports = {
 		try {
 			await interaction.reply({
 				content: `This bot was created by Slone#0110 with some help from hazen#7037.
-In-game: Arkondriel, commander of the Cat crew on Solaris.
+In-game: Arkondriel, commander of the Cat crew on Solaris. Modified for Aestral Noa by Jokoril#3941.
 On this server, the bot is maintained by <@${process.env.botmaintainer}>.`, ephemeral: true
 			});
 		} catch (error) {

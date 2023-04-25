@@ -17,6 +17,7 @@ module.exports = {
         .addStringOption(option =>
             option.setName('bossmenu')
                 .setDescription('The boss timer menu you wish to create.')
+                /* To add new bosses, follow the format below and add the new boss details, preferably in alphabetical order. */
                 .addChoices(
                     { name: 'Apophis', value: 'apophisMenu' },
                     { name: 'Barbarossa', value: 'barbarossaMenu' },
@@ -29,6 +30,7 @@ module.exports = {
                     { name: 'Harrah', value: 'harrahMenu' },
                     { name: 'Lucia', value: 'luciaMenu' },
                     { name: 'Magma', value: 'magmaMenu' },
+                    { name: 'Nakya', value: 'nakyaMenu' },
                     { name: 'Robarg', value: 'robargMenu' },
                     { name: 'Rudolph', value: 'rudolphMenu' },
                     { name: 'Scylla', value: 'scyllaMenu' },
@@ -45,27 +47,56 @@ module.exports = {
             const object = interaction.options.getString('create');
             const bossMenu = interaction.options.getString('bossmenu');
             if (object === 'bossTimerMenu') {
-                // Make a buton that replies with a countdown of the user's line change.
                 const lineCooldownButton = new ActionRowBuilder()
+                    // Make a button that marks the boss in the selected channel as missing.
+                     .addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('markMissing')
+                            .setLabel(`Missing!`)
+                            .setEmoji(`🥷`)
+                            .setStyle(ButtonStyle.Danger),
+                     )
+                     // Make a button that replies with a countdown of the user's line change.
                     .addComponents(
                         new ButtonBuilder()
                             .setCustomId('lineCooldown')
-                            .setLabel(`Line Cooldown Timer`)
+                            .setLabel(`Cooldown`)
+                            .setEmoji(`⌚`)
                             .setStyle(ButtonStyle.Secondary),
+                    )
+                    // Make a button that marks the boss in the selected channel as defeated.
+                    .addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('markDefeated')
+                            .setLabel(`Killed!`)
+                            .setEmoji(`⚰`)
+                            .setStyle(ButtonStyle.Success),
+                    )
+                    // Make a button that displays instructions on how to use the interaction menu.
+                    .addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('help')
+                            .setEmoji(`❔`)
+                            .setStyle(ButtonStyle.Primary),
                     );
                 // Cache the channel the interaction came from.
-                const channel = client.channels.cache.get(interaction.channelId);
-                if (bossMenu === 'apophisMenu') {
+
+/*  To add new bosses, copy and paste one of the boss code blocks somewhere suitable and rename everything with the boss name accordingly. 
+    Refer to the Apophis code block comments.
+    To add or remove channels, follow the .addOptions format and add more / delete labels and values. */
+
+                const channel = client.channels.cache.get(interaction.channelId);               
+                if (bossMenu === 'apophisMenu') {                                               // Minimize and copy from this line. Menu needs to be renamed.
                     // Build select menus.
                     const apophisSelector = new ActionRowBuilder()
                         .addComponents(
                             new StringSelectMenuBuilder()
-                                .setCustomId('apophisTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setCustomId('apophisTimestamp')                                // Timestamp needs to be renamed.
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
-                                        value: `apophisChannel1`,
+                                        value: `apophisChannel1`,                               // All Channels need to be renamed.
                                     },
                                     {
                                         label: `Channel 2`,
@@ -129,15 +160,15 @@ module.exports = {
                                     }
                                 ])
                         )
-                    await channel.send({ components: [lineCooldownButton, apophisSelector] });
-                }
+                    await channel.send({ components: [lineCooldownButton, apophisSelector] });   //Selector needs to be renamed
+                }                                                                               // Copy until this line
                 if (bossMenu === 'barbarossaMenu') {
                     // Build select menus.
                     const barbarossaSelector = new ActionRowBuilder()
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('barbarossaTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -213,7 +244,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('cultonTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -257,7 +288,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('devourerTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -277,7 +308,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('dragonTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -297,7 +328,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('evaTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -349,7 +380,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('frostbotTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -425,7 +456,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('haboelaTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -517,7 +548,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('harrahTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -561,7 +592,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('luciaTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -637,7 +668,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('magmaTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -683,13 +714,105 @@ module.exports = {
                         )
                     await channel.send({ components: [lineCooldownButton, magmaSelector] });
                 }
+                if (bossMenu === 'nakyaMenu') {
+                    // Build select menus.
+                    const nakyaSelector = new ActionRowBuilder()
+                        .addComponents(
+                            new StringSelectMenuBuilder()
+                                .setCustomId('nakyaTimestamp')
+                                .setPlaceholder('Select Channel')
+                                .addOptions([
+                                    {
+                                        label: `Channel 1`,
+                                        value: `nakyaChannel1`,
+                                    },
+                                    {
+                                        label: `Channel 2`,
+                                        value: `nakyaChannel2`,
+                                    },
+                                    {
+                                        label: `Channel 3`,
+                                        value: `nakyaChannel3`,
+                                    },
+                                    {
+                                        label: `Channel 4`,
+                                        value: `nakyaChannel4`,
+                                    },
+                                    {
+                                        label: `Channel 5`,
+                                        value: `nakyaChannel5`,
+                                    },
+                                    {
+                                        label: `Channel 6`,
+                                        value: `nakyaChannel6`,
+                                    },
+                                    {
+                                        label: `Channel 7`,
+                                        value: `nakyaChannel7`,
+                                    },
+                                    {
+                                        label: `Channel 8`,
+                                        value: `nakyaChannel8`,
+                                    },
+                                    {
+                                        label: `Channel 9`,
+                                        value: `nakyaChannel9`,
+                                    },
+                                    {
+                                        label: `Channel 10`,
+                                        value: `nakyaChannel10`,
+                                    },
+                                    {
+                                        label: `Channel 11`,
+                                        value: `nakyaChannel11`,
+                                    },
+                                    {
+                                        label: `Channel 12`,
+                                        value: `nakyaChannel12`,
+                                    },
+                                    {
+                                        label: `Channel 13`,
+                                        value: `nakyaChannel13`,
+                                    },
+                                    {
+                                        label: `Channel 14`,
+                                        value: `nakyaChannel14`,
+                                    },
+                                    {
+                                        label: `Channel 15`,
+                                        value: `nakyaChannel15`,
+                                    },
+                                    {
+                                        label: `Channel 16`,
+                                        value: `nakyaChannel16`,
+                                    },
+                                    {
+                                        label: `Channel 17`,
+                                        value: `nakyaChannel17`,
+                                    },
+                                    {
+                                        label: `Channel 18`,
+                                        value: `nakyaChannel18`,
+                                    },
+                                    {
+                                        label: `Channel 19`,
+                                        value: `nakyaChannel19`,
+                                    },
+                                    {
+                                        label: `Channel 20`,
+                                        value: `nakyaChannel20`,
+                                    }
+                                ])
+                        )
+                    await channel.send({ components: [lineCooldownButton, nakyaSelector] });
+                }
                 if (bossMenu === 'robargMenu') {
                     // Build select menus.
                     const robargSelector = new ActionRowBuilder()
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('robargTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -766,7 +889,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('rudolphTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -818,7 +941,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('scyllaTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
@@ -910,7 +1033,7 @@ module.exports = {
                         .addComponents(
                             new StringSelectMenuBuilder()
                                 .setCustomId('sobekTimestamp')
-                                .setPlaceholder('Mark Defeated')
+                                .setPlaceholder('Select Channel')
                                 .addOptions([
                                     {
                                         label: `Channel 1`,
