@@ -34,13 +34,13 @@ If you're not familiar with Node.JS or working with developer applications and B
 
 ## Configuring the Bot
 1. Find out beforehand how many channels your in-game server has for each region. By default, the bot is configured for:
-  * Aesperia (16)
-  * Artificial Island (2)
-  * Vera (10)
-  * Confounding Abyss (8)
-  * Innars (20)
+  * Aesperia bosses (16)
+  * Artificial Island bosses (2)
+  * Vera bosses (10)
+  * Confounding Abyss bosses (8)
+  * Innars bosses (20)
   
-2. Edit `exports/bossMessageIDTemplates.js`, `commands/setup.js` and `commands/interaction.js` if you need to change the number of channels or add new bosses. Follow the instructions contained within the comments of each .js file. Then, restart the bot.
+2. Edit `exports/bossConfig.js` if boss properties need to be updated or modified . Then, restart the bot.
 
 ## Discord Setup
 1. Create a new forum in your Discord server and give it the following permissions:  
@@ -58,19 +58,18 @@ If you're not familiar with Node.JS or working with developer applications and B
 
    Create a forum post with the title of the boss and your preferred picture of the boss.  
   
-    >Optional: If you want the boss tracker forum to be sorted alphabetically, it is recommended that you set the forum sort order to Creation Time, then post the bosses  in alphabetically reversed order (Z-A). 
-    
-    > Alternatively, you can create a pinned thread / channel containing links to each boss thread for one-stop navigation. Tagging the bosses based on region also helps.
+    >Optional: If you want the boss tracker forum to be sorted alphabetically, it is recommended that you set the forum sort order to Creation Time, then post the bosses  in alphabetically reversed order (Z-A). <br /> <br />
+    Alternatively, you can create a pinned thread / channel containing links to each boss thread for one-stop navigation. Tagging the bosses based on region also helps.
 
-    Use the `/setup` command to issue placeholder messages. Provide the boss and number of channels required in the sub-command fields. 
-
-    `/setup boss:<boss> channels:<channels>`  
+   Use the `/setup` command to generate placeholder messages.
+   
+   `/setup boss:<boss>`
 
 4. For each boss:
 
-    Use the `/interaction` command after the placeholder messages have been created.
-    
-    `/interaction create:Boss Timer bossmenu:<boss>`
+    Use the /interaction command after the placeholder messages have been created.
+
+    `/interaction boss_menu:<boss>`
 
 
 ## Production
@@ -91,17 +90,18 @@ It is recommended to test out each button on one of the bosses to ensure that th
 
 In the event that boss status updates are not being reflected on the bot messages, try restarting or re-inviting the bot.
 
-## Future Changes
-#### Channels
-If and when channels are removed or added from servers (usually after a patch), the files `commands/interaction.js` and `exports/bossMessageID.js` will need to be updated to reflect the channel availability.  
+## Updating bosses and channels
+**Bosses**
 
-Specifically for adding new channels, placeholder messages may need to be regenerated for formatting reasons, as it will not show contiguously if new messages are added. Step 3 and 4 of Discord Setup will need to be repeated.  
+All required boss properties are stored within `exports/bossConfig.js`. If there are changes to the channels present, or new bosses are added in the future, simply add, remove or modify the required properties and array entries.
 
-#### Bosses
-If and when new bosses are added to the game, you will need to update the files `commands/interaction.js`, `commands/setup.js` and `exports/bossMessageID.js`.
+**Status Messages**
 
-## Suggestion
-Using an internal persistent database would save a lot of manual work on future updates regarding channel changes. Additionally, a single message embed could be used rather than many individual messages, which would allow for easy formatting changes. At this time, such a change is not being actively developed.
+Boss Message IDs are stored within the `exports/BossMessageMap.json` file, but do not require manual editing and can be updated via the `/setup` command.
+
+If additional channels are opened (i.e Artificial Island goes from 2 channels to 4), it is recommended to `/clear` and recreate the existing messages and interaction menus on the affected boss threads in order to preserve formatting.
+
+If channels for a region are closed, simply delete the excess messages from the affected boss thread. Then, delete and recreate the interaction menu to update the number of selectable channels.
 
 ## Screenshots
 [![](https://i.imgur.com/kirOWGB.png)](https://i.imgur.com/kirOWGB.png)

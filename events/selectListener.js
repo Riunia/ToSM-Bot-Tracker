@@ -1,7 +1,8 @@
 const { EmbedBuilder, Events, GuildMemberManager, GuildMemberRoleManager, ComponentType, SlashCommandBuilder } = require('discord.js');
+var fs = require('fs');
 
 //Respawn time (in seconds). Default is 3600 (1 hour). 
-let seconds = 3600 //For debugging during setup, seconds = 60 is suggested. Don't forget to change it back afterwards!
+let seconds = 60 //For debugging during setup, seconds = 60 is suggested. Don't forget to change it back afterwards!
 
 // Create objects to store temporary timers and identifiers.
 var timeouts = [];
@@ -58,7 +59,7 @@ client.on(Events.InteractionCreate, async interaction => {
             const target = reportMap.get(buttonUser)    // Fetch button user's request from the reportMap.
             //console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
 
-            var { channel, bossTimerID, channelNumber, timestamp, timeoutmsg } = GenerateReport(interaction, target);
+            var { channel, bossTimerID, channelNumber, timestamp } = GenerateReport(interaction, target);
             await SendKillReport();
         } catch(error) {
             return console.log(error);
@@ -66,13 +67,13 @@ client.on(Events.InteractionCreate, async interaction => {
 
     async function SendKillReport() {
             // Fetch the message by ID and update status.
-            await channel.messages.fetch(bossTimerID.messageID).then(async (message) => {
+            await channel.messages.fetch(bossTimerID).then(async (message) => {
             // Report Channel, status, relative and absolute respawn time(timezone-agnostic), and reporting user.
             (await message.edit(`**Channel ${channelNumber}:** :coffin:     Respawns at <t:${Math.floor(timestamp / 1000) + seconds}:t>  /  <t:${Math.floor(timestamp / 1000) + seconds}:R>  (<@!${interaction.user.id}>)`));
             // Clear any old ongoing timers for the selected message.
-            clearTimeout(timeouts[timeoutmsg]);
+            clearTimeout(timeouts[bossTimerID]);
             // Start a new timer to update status to "respawned" after (seconds + 5s buffer time).
-            timeouts[timeoutmsg] = setTimeout(async function () {
+            timeouts[bossTimerID] = setTimeout(async function () {
                 (await message.edit(`**Channel ${channelNumber}:** :white_check_mark:     Respawned`));
             }, 1000 * seconds + 5);
         });
@@ -92,9 +93,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
             await interaction.deferUpdate();            // Acknowledge the menu interaction.
             const target = reportMap.get(buttonUser)    // Fetch button user's request from the reportMap.
-            //console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
+            // console.log ('match found for ' + buttonUser + ', updating ' + target + '...')
 
-            var { channel, bossTimerID, channelNumber, timestamp, timeoutmsg } = GenerateReport(interaction, target);
+            var { channel, bossTimerID, channelNumber, timestamp } = GenerateReport(interaction, target);
             await SendMissingReport();
         } catch(error) {
             return console.log(error);
@@ -102,19 +103,19 @@ client.on(Events.InteractionCreate, async interaction => {
 
     async function SendMissingReport() {
             // Fetch the message by ID and update status.
-            await channel.messages.fetch(bossTimerID.messageID).then(async (message) => {
+            await channel.messages.fetch(bossTimerID).then(async (message) => {
             // Report Channel, status, relative and absolute reporting time(timezone-agnostic), and reporting user.
             (await message.edit(`**Channel ${channelNumber}:** :warning:     Reported missing <t:${Math.floor(timestamp / 1000)}:R>  (<@!${interaction.user.id}>)`));
             // Clear any old ongoing timers for the selected message.
-            clearTimeout(timeouts[timeoutmsg]);
+            clearTimeout(timeouts[bossTimerID]);
         });
     }
 })
 
 function GenerateReport(interaction, target) {
-    const rawdata = require('../exports/BossMessageID.json');
-    let bossTimers = { "bossTimers": rawdata };
-
+    let rawdata = fs.readFileSync('./exports/BossMessageMap.json')
+    let objdata = JSON.parse(rawdata);
+    const bossTimers = new Map(Object.entries(objdata))
     // Generate elements to update the boss status message...
     // Timestamp
     const timestamp = Date.now();
@@ -122,8 +123,6 @@ function GenerateReport(interaction, target) {
     const channel = client.channels.cache.get(interaction.channelId);
     const channelNumber = target.match(/\d+/g);
     // Message ID
-    let bossTimerID = bossTimers.bossTimers.find(r => r.key === target) || { key: "error", value: `Something went wrong or this item is not yet finished. The BOT author has been notified.` };
-    let timeoutmsg = (bossTimerID.messageID);
-    return { channel, bossTimerID, channelNumber, timestamp, timeoutmsg };
+    let bossTimerID = bossTimers.get(target)
+    return { channel, bossTimerID, channelNumber, timestamp };
 }
-
