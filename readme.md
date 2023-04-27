@@ -18,20 +18,27 @@ This is a fork of SloneFallion's original [World Boss Tracker Bot](https://githu
 * Updated setup instructions specific to this fork.
 
 ## Changelog
-### V1.1.1
+### V1.1.2
  Fixes to V1.1.0:
-* Fixed an error in the readme containing wrong instructions on setting bot permissions.
-* Fixed respawn timer for bosses being set to 60s.
+  *  Removed old setup code that was casuing `/setup` to not execute properly.
+
+<details>
+  <summary> 
+  V1.1.1 
+  </summary>
+ 
+  Fixes to V1.1.0:
+  * Fixed an error in the readme containing wrong instructions on setting bot permissions.
+  * Fixed respawn timer for bosses being set to 60s.
+ </details>
 
 <details>
   <summary> 
   V1.1.0 
   </summary>
-
+ 
   * Further modified the method of obtaining and updating boss info and message IDs. 
-
   * Now, future updates and modifications such as channel changes and addition of new bosses can be done from a single file bossConfig.js, which will be loaded dynamically upon command execution.
-
   * Readme was updated to reflect the changes.
 </details>
 
