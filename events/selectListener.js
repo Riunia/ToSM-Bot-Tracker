@@ -2,7 +2,7 @@ const { EmbedBuilder, Events, GuildMemberManager, GuildMemberRoleManager, Compon
 var fs = require('fs');
 
 //Respawn time (in seconds). Default is 3600 (1 hour). 
-let seconds = 60 //For debugging during setup, seconds = 60 is suggested. Don't forget to change it back afterwards!
+let seconds = 3600 //For debugging during setup, seconds = 60 is suggested. Don't forget to change it back afterwards!
 
 // Create objects to store temporary timers and identifiers.
 var timeouts = [];
