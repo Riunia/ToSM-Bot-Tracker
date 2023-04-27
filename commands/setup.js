@@ -63,11 +63,6 @@ module.exports = {
 
 				// Convert map and overwrite the JSON file.
 				const bossTimerIDs = Object.fromEntries(idMap);
-				bossTimerIDs = bossTimerIDs.sort((a, b) => {
-					if (a < b) {
-					  return -1;
-					}
-				  });
 				fs.writeFileSync('./exports/BossMessageMap.json', JSON.stringify(bossTimerIDs, ',', 4) , 'utf-8')
 				};
 			//console.log (bossTimers);
