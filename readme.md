@@ -17,6 +17,33 @@ This is a fork of SloneFallion's original [World Boss Tracker Bot](https://githu
 #### Documentation
 * Updated setup instructions specific to this fork.
 
+## Changelog
+### V1.1.1
+ Fixes to V1.1.0:
+* Fixed an error in the readme containing wrong instructions on setting bot permissions.
+* Fixed respawn timer for bosses being set to 60s.
+
+<details>
+  <summary> 
+  V1.1.0 
+  </summary>
+
+  * Further modified the method of obtaining and updating boss info and message IDs. 
+
+  * Now, future updates and modifications such as channel changes and addition of new bosses can be done from a single file bossConfig.js, which will be loaded dynamically upon command execution.
+
+  * Readme was updated to reflect the changes.
+</details>
+
+<details>
+  <summary> 
+  V1.0.0 
+  </summary>
+
+  * Initial release
+
+</details>
+
 ## Pre-requisites
 A Discord account with [developer mode enabled](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) and Node.JS.
 If you're not familiar with Node.JS or working with developer applications and Bots on Discord, please see [this guide](https://discordjs.guide/preparations) and follow the sections below.  
