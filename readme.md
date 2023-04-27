@@ -47,10 +47,9 @@ If you're not familiar with Node.JS or working with developer applications and B
 * Everyone:
   * Deny ALL
 * Bot
-  * Deny ALL
-  * Allow View Channel
+  * Allow Send Messages in Posts
+  * Allow Embed Links
   * Allow Read Post History
-  * Allow Create Invite at your discretion
 
 2. Start the bot if it has not yet been started.
 
