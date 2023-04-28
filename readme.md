@@ -83,6 +83,7 @@ If you're not familiar with Node.JS or working with developer applications and B
 * Bot
   * Allow Send Messages in Posts
   * Allow Embed Links
+  * Allow Manage Messages
   * Allow Read Post History
 
 2. Start the bot if it has not yet been started.
