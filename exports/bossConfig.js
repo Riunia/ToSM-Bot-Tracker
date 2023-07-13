@@ -21,9 +21,9 @@ bossProperties = [
     { name: 'Rudolph',       value: 'rudolph',       channels: 8,    key: 'rudolphChannel' },
     { name: 'Scylla',        value: 'scylla',        channels: 15,   key: 'scyllaChannel' },
     { name: 'Sobek',         value: 'sobek',         channels: 13,   key: 'sobekChannel' },
-    { nanme: 'Zhuyan',       value: 'zhuyan',        channels: 15,   key: 'zhuyanChannel' },
-    { nanme: 'Black Crow',   value: 'blackcrow',     channels: 15,   key: 'blackcrowChannel' },
-    { nanme: 'Taotie',       value: 'taotie',        channels: 15,   key: 'taotieChannel' },
+    { name: 'Zhuyan',        value: 'zhuyan',        channels: 15,   key: 'zhuyanChannel' },
+    { name: 'Black Crow',    value: 'blackcrow',     channels: 15,   key: 'blackcrowChannel' },
+    { name: 'Taotie',        value: 'taotie',        channels: 15,   key: 'taotieChannel' },
     //{name: 'boss_name',     value: 'boss_name_lowercase',   channels: 0,  key: 'boss_nameChannel'},
 ];
 
