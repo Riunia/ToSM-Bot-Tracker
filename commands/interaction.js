@@ -40,16 +40,35 @@ module.exports = {
             let timestamp = (choice.value + 'Timestamp');
             let chOption = (choice.key)
             let chCount = (choice.channels)
-            const stringselect = [];                        // Create an array containting channel options.
+            const stringselect = [];                                       // Create an array containting channel options 1-25.
+            const stringselect2 = [];                                      // Create an array containting channel options 25-50.
+            
+            if (chCount <= 25) {
+                console.log('less than 25')
             for (let i = 0; i < chCount; i++ ) {
                 stringselect.push({
                     label: `Channel ${i+1}`, 
                     value: (chOption + `${i+1}`)}
                 )};
+                } else if (chCount >25) {
+                    console.log('more than 25')
 
+                    for (let i = 0; i < 25; i++ ) {
+                        stringselect.push({
+                            label: `Channel ${i+1}`, 
+                            value: (chOption + `${i+1}`)}
+                        )}; 
+
+                    for (let i = 25; i < chCount; i++ ) {
+                        stringselect2.push({
+                            label: `Channel ${i+1}`, 
+                            value: (chOption + `${i+1}`)}
+                        )}; 
+                }
                 const actionButtons = generateButtons();    // Missing, Cooldown, Killed and '?' buttons.
              
                     // Build select menus.
+                    if (chCount <=25) {
                     const bossSelector = new ActionRowBuilder()
                         .addComponents(
                             new StringSelectMenuBuilder()
@@ -57,7 +76,25 @@ module.exports = {
                                 .setPlaceholder('Select Channel')
                                 .addOptions(stringselect)   // Retrieve the array containing channel options.
                                 )
-                    await channel.send({ components: [actionButtons, bossSelector] });                
+                    await channel.send({ components: [actionButtons, bossSelector] })
+                }
+                    else if (chCount >25) {
+                    const bossSelector = new ActionRowBuilder()
+                        .addComponents(
+                            new StringSelectMenuBuilder()
+                                .setCustomId(timestamp)                                
+                                .setPlaceholder('Select Channel 1-25')
+                                .addOptions(stringselect)   // Retrieve the array containing channel options.
+                                )
+                    const bossSelector2 = new ActionRowBuilder()
+                        .addComponents(
+                            new StringSelectMenuBuilder()
+                                .setCustomId(timestamp + '2')                                
+                                .setPlaceholder('Select Channel 26-50')
+                                .addOptions(stringselect2)   // Retrieve the array containing channel options.
+                                )
+                    await channel.send({ components: [actionButtons, bossSelector, bossSelector2] })
+                };                
         } catch (error) {
             return console.log(error);
         }
